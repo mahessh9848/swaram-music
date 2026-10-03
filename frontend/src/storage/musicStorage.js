@@ -118,7 +118,7 @@ export async function saveImportedTrack(file) {
     fileName: file.name,
     fileSize: file.size,
     dateAdded: Date.now(),
-    sourceType: 'DIRECT_AUDIO',
+    sourceType: 'LOCAL_MP3',
     isLocal: true,
   };
 
@@ -165,7 +165,7 @@ export async function getAllImportedTracks() {
             originalTitle: rec.originalTitle || rec.title,
             artist: rec.artist,
             duration: rec.duration || 0,
-            sourceType: 'DIRECT_AUDIO',
+            sourceType: 'LOCAL_MP3',
             sourceUrl,
             blob: rec.blob,
             isLocal: true,

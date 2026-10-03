@@ -73,11 +73,10 @@ test*.png
 *.test.png
 *.qa.png
 
-# ─── Large audio source files (root songs/ folder) ────────────────
-# The actual production audio lives in frontend/public/audio/ and is
-# tracked via Git LFS (see .gitattributes).
-# The root songs/ folder is a local working copy — NOT committed.
-songs/
+# ─── Large audio source files (root /songs/ folder) ────────────────
+# The actual production audio lives in frontend/public/songs/
+# The root /songs/ folder is a local working copy — NOT committed.
+/songs/
 
 # ─── Package manager lock files (keep) ───────────────────────────
 # lock files ARE committed so installs are reproducible

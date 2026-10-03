@@ -11,6 +11,8 @@
  */
 
 export const PROVIDER_TYPES = {
+  STATIC_AUDIO: 'STATIC_AUDIO',
+  LOCAL_MP3: 'LOCAL_MP3',
   DIRECT_AUDIO: 'DIRECT_AUDIO',
   YOUTUBE: 'YOUTUBE',
   SPOTIFY: 'SPOTIFY',
@@ -239,12 +241,14 @@ export class SpotifyAdapter extends PlaybackAdapter {
 /**
  * Factory helper to get the appropriate adapter
  */
-export function createPlaybackAdapter(type = PROVIDER_TYPES.DIRECT_AUDIO, options = {}) {
+export function createPlaybackAdapter(type = PROVIDER_TYPES.STATIC_AUDIO, options = {}) {
   switch (type) {
     case PROVIDER_TYPES.YOUTUBE:
       return new YouTubeAdapter(options);
     case PROVIDER_TYPES.SPOTIFY:
       return new SpotifyAdapter(options);
+    case PROVIDER_TYPES.STATIC_AUDIO:
+    case PROVIDER_TYPES.LOCAL_MP3:
     case PROVIDER_TYPES.DIRECT_AUDIO:
     default:
       return new DirectAudioAdapter(options);
