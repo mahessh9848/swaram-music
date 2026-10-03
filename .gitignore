@@ -1,0 +1,84 @@
+# ══════════════════════════════════════════════════════════════════
+# SWARAM — Root .gitignore
+# ══════════════════════════════════════════════════════════════════
+
+# ─── OS / Editor junk ────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.Spotlight-V100
+.Trashes
+
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ─── Node.js ──────────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.local
+.npm
+
+# ─── Build outputs ────────────────────────────────────────────────
+dist/
+dist-ssr/
+build/
+.output/
+.nuxt/
+.next/
+
+# ─── Environment & Secrets ────────────────────────────────────────
+# Keep .env.example files (they have no real secrets)
+# Ignore all real .env files
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# ─── Logs ─────────────────────────────────────────────────────────
+logs/
+*.log
+
+# ─── Oracle / SQL*Plus ────────────────────────────────────────────
+# Ignore local Oracle credential files and tnsnames.ora overrides
+tnsnames.ora
+sqlnet.ora
+listener.ora
+*.dmp
+*.dbf
+*.frm
+
+# ─── Scratch / Test files ─────────────────────────────────────────
+scratch/
+*.scratch.*
+
+# ─── Screenshot / QA artifacts in root ───────────────────────────
+# These are local QA screenshots taken during development.
+# They are not part of the application source.
+refinement_*.png
+test*.png
+*.test.png
+*.qa.png
+
+# ─── Large audio source files (root songs/ folder) ────────────────
+# The actual production audio lives in frontend/public/audio/ and is
+# tracked via Git LFS (see .gitattributes).
+# The root songs/ folder is a local working copy — NOT committed.
+songs/
+
+# ─── Package manager lock files (keep) ───────────────────────────
+# lock files ARE committed so installs are reproducible
+# (no ignore rule needed — they are tracked by default)

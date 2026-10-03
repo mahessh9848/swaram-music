@@ -1,0 +1,25 @@
+# ══════════════════════════════════════════════════════════════════
+# SWARAM Backend — .gitignore
+# ══════════════════════════════════════════════════════════════════
+
+node_modules/
+npm-debug.log*
+*.local
+
+# Environment — never commit real secrets
+.env
+.env.*
+!.env.example
+
+# OS / Editor
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+Thumbs.db
+
+# Oracle Instant Client (if placed locally)
+instantclient*/
+*.so
+*.dylib
+*.dll
