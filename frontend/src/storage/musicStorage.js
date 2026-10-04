@@ -100,9 +100,9 @@ export function extractAudioDuration(file) {
 }
 
 /**
- * Save an imported MP3 file to IndexedDB
+ * Save an imported MP3 file to IndexedDB with optional language and mood metadata
  */
-export async function saveImportedTrack(file) {
+export async function saveImportedTrack(file, metadata = {}) {
   const db = await openDB();
   const parsed = parseFileName(file.name);
   const duration = await extractAudioDuration(file);
@@ -110,14 +110,16 @@ export async function saveImportedTrack(file) {
   const trackId = `local_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
   const record = {
     id: trackId,
-    title: parsed.title,
+    title: metadata.title || parsed.title,
     originalTitle: parsed.title,
-    artist: parsed.artist,
+    artist: metadata.artist || parsed.artist,
     duration,
     blob: file,
     fileName: file.name,
     fileSize: file.size,
     dateAdded: Date.now(),
+    language: metadata.language || 'ENGLISH',
+    mood: metadata.mood || null,
     sourceType: 'LOCAL_MP3',
     isLocal: true,
   };
@@ -165,6 +167,8 @@ export async function getAllImportedTracks() {
             originalTitle: rec.originalTitle || rec.title,
             artist: rec.artist,
             duration: rec.duration || 0,
+            language: rec.language || 'ENGLISH',
+            mood: rec.mood || null,
             sourceType: 'LOCAL_MP3',
             sourceUrl,
             blob: rec.blob,

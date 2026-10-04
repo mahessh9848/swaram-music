@@ -1,19 +1,26 @@
 import { motion } from 'framer-motion';
 import { Heart, Plus } from 'lucide-react';
 import SongCard from './SongCard';
+import { getLanguageById } from '../data/languages';
 
 /**
- * PlaylistSection — Section 3: Recommended for this mood.
+ * PlaylistSection — Section 3: Recommended for this mood + language.
  * Minimalist track list with refined padding and typography.
- * Displays dedicated empty state when a mood (e.g. Romantic) has no preset tracks.
+ * Displays dedicated empty state when a mood + language combination has no preset tracks.
  */
-export default function PlaylistSection({ mood, player }) {
+export default function PlaylistSection({ mood, language, player }) {
   const { playlist } = mood;
   const { currentSong, isPlaying, playFromIndex, loadQueue, queue } = player;
+  const langObj = getLanguageById(language);
+
+  // Filter playlist songs by the selected language
+  const matchingSongs = playlist.songs.filter(
+    (song) => !song.language || song.language === language
+  );
 
   const handlePlaySong = (index) => {
-    if (queue.length === 0 || queue[0]?.id !== playlist.songs[0]?.id) {
-      loadQueue(playlist.songs, index);
+    if (queue.length === 0 || queue[0]?.id !== matchingSongs[0]?.id) {
+      loadQueue(matchingSongs, index);
       setTimeout(() => player.play(), 50);
     } else {
       playFromIndex(index);
@@ -35,12 +42,24 @@ export default function PlaylistSection({ mood, player }) {
           transition={{ duration: 0.6 }}
           className="mb-8 md:mb-10"
         >
-          <span
-            className="text-[10px] tracking-[0.2em] uppercase font-medium block mb-1"
-            style={{ color: 'var(--text-muted)' }}
-          >
-            Recommended for this mood
-          </span>
+          <div className="flex items-center gap-2 mb-1">
+            <span
+              className="text-[10px] tracking-[0.2em] uppercase font-medium block"
+              style={{ color: 'var(--text-muted)' }}
+            >
+              Recommended for this mood
+            </span>
+            <span
+              className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+              style={{
+                background: 'var(--hover-item)',
+                color: 'var(--text-secondary)',
+                border: '1px solid var(--border-subtle)',
+              }}
+            >
+              {langObj?.label || 'English'}
+            </span>
+          </div>
           <h2
             className="font-display text-2xl sm:text-3xl font-medium tracking-tight mb-1"
             style={{ color: 'var(--text-primary)' }}
@@ -48,14 +67,14 @@ export default function PlaylistSection({ mood, player }) {
             {playlist.title}
           </h2>
           <p className="text-xs font-light" style={{ color: 'var(--text-muted)' }}>
-            {playlist.songs.length > 0
-              ? `${playlist.songs.length} curated track${playlist.songs.length > 1 ? 's' : ''} · ${mood.name} atmosphere`
-              : `Personalize your ${mood.name} atmosphere`}
+            {matchingSongs.length > 0
+              ? `${matchingSongs.length} curated track${matchingSongs.length > 1 ? 's' : ''} · ${mood.name} atmosphere · ${langObj?.label || 'English'}`
+              : `Personalize your ${mood.name} atmosphere in ${langObj?.label || 'English'}`}
           </p>
         </motion.div>
 
         {/* Song list or empty state */}
-        {playlist.songs.length === 0 ? (
+        {matchingSongs.length === 0 ? (
           <div
             className="p-8 sm:p-10 rounded-2xl text-center transition-colors"
             style={{
@@ -73,7 +92,7 @@ export default function PlaylistSection({ mood, player }) {
               No songs yet
             </p>
             <p className="text-xs font-light max-w-sm mx-auto mb-5" style={{ color: 'var(--text-muted)' }}>
-              Add music to build this playlist. Import an MP3 to your library.
+              Add music to build this playlist. Import an MP3 for {langObj?.label || 'this language'} to your library.
             </p>
             <a
               href="#library"
@@ -90,7 +109,7 @@ export default function PlaylistSection({ mood, player }) {
           </div>
         ) : (
           <div className="space-y-1">
-            {playlist.songs.map((song, i) => (
+            {matchingSongs.map((song, i) => (
               <SongCard
                 key={song.id}
                 song={song}

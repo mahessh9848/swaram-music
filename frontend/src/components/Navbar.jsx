@@ -3,8 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, User, LogOut, ChevronDown } from 'lucide-react';
 import { BRAND, NAV_LINKS } from '../data/moods';
 import ThemeToggle from './ThemeToggle';
+import LanguageSelector from './LanguageSelector';
 
-export default function Navbar({ auth, theme, toggleTheme }) {
+export default function Navbar({ auth, theme, toggleTheme, language, setLanguage }) {
   const [scrolled, setScrolled] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
@@ -93,6 +94,9 @@ export default function Navbar({ auth, theme, toggleTheme }) {
 
       {/* Actions */}
       <div className="flex items-center gap-2 sm:gap-3">
+        {/* Language Selector */}
+        <LanguageSelector language={language} setLanguage={setLanguage} />
+
         {/* Theme Toggle Button */}
         <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
 

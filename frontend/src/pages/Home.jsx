@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { MOODS, getMoodById } from '../data/moods';
 import Navbar from '../components/Navbar';
@@ -13,18 +13,19 @@ import Footer from '../components/Footer';
 import { usePlayer } from '../hooks/usePlayer';
 import { useAuth } from '../hooks/useAuth';
 import { useTheme } from '../hooks/useTheme';
+import { useLanguage } from '../hooks/useLanguage';
 import { getAllImportedTracks } from '../storage/musicStorage';
 
 /**
- * Home — Refined Swaram Experience.
+ * Home — Refined Swaram Experience with Language Selection & Mood Discovery.
  *
  * Page Architecture:
  * - Fixed background: Zero-flash layered crossfade MoodHero
- * - Fixed navbar with theme switcher, demo login, and account state
+ * - Fixed navbar with theme switcher, language selector, demo login, and account state
  * - Section 1: Hero (full-viewport background artwork + minimal editorial mood typography)
- * - Section 2: Mood Selector (compact, non-zoomed 8-mood visual grid)
- * - Section 3: Recommended for this mood (curated tracks from real MP3s)
- * - Section 4: Your Library (Local MP3 imports with IndexedDB persistence)
+ * - Section 2: Mood Selector (compact, non-zoomed 8-mood visual grid + inline language pills)
+ * - Section 3: Recommended for this mood + language (curated tracks from real MP3s)
+ * - Section 4: Your Library (Local MP3 imports with language metadata & IndexedDB persistence)
  * - Section 5: Minimal Footer
  * - Fixed bottom: Proportionately balanced floating MusicPlayer
  */
@@ -35,6 +36,7 @@ export default function Home() {
   const player = usePlayer();
   const auth = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { language, setLanguage } = useLanguage();
 
   // Load persistent local MP3 tracks from IndexedDB on startup
   useEffect(() => {
@@ -45,13 +47,23 @@ export default function Home() {
     });
   }, []);
 
-  // Load the mood's playlist into the player queue when mood changes
+  // Filter mood playlist by active language
+  const currentMoodSongs = useMemo(() => {
+    if (!mood?.playlist?.songs) return [];
+    return mood.playlist.songs.filter(
+      (song) => !song.language || song.language === language
+    );
+  }, [mood, language]);
+
+  // Load the mood's filtered playlist into the player queue when mood or language changes
   useEffect(() => {
-    if (mood?.playlist?.songs) {
-      player.loadQueue(mood.playlist.songs);
+    if (currentMoodSongs.length > 0) {
+      player.loadQueue(currentMoodSongs);
+    } else {
+      player.loadQueue([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeMoodId]);
+  }, [activeMoodId, language]);
 
   const handleMoodSelect = useCallback((moodId) => {
     if (moodId === activeMoodId) return;
@@ -64,8 +76,14 @@ export default function Home() {
       {/* Fixed background artwork layer with zero-flash crossfade */}
       <MoodHero mood={mood} />
 
-      {/* Fixed navigation layer with theme toggle */}
-      <Navbar auth={auth} theme={theme} toggleTheme={toggleTheme} />
+      {/* Fixed navigation layer with theme toggle and language selector */}
+      <Navbar
+        auth={auth}
+        theme={theme}
+        toggleTheme={toggleTheme}
+        language={language}
+        setLanguage={setLanguage}
+      />
 
       {/* Naturally scrollable content wrapper */}
       <div className="relative z-10">
@@ -103,21 +121,28 @@ export default function Home() {
           className="relative transition-colors duration-300"
           style={{ background: 'var(--bg-content)' }}
         >
-          {/* Section 2: Choose your mood */}
+          {/* Section 2: Choose your mood & Language selection */}
           <MoodSelector
             moods={MOODS}
             activeMoodId={activeMoodId}
             onSelect={handleMoodSelect}
+            language={language}
+            setLanguage={setLanguage}
           />
 
-          {/* Section 3: Recommended for this mood */}
-          <PlaylistSection mood={mood} player={player} />
+          {/* Section 3: Recommended for this mood + language */}
+          <PlaylistSection
+            mood={mood}
+            language={language}
+            player={player}
+          />
 
           {/* Section 4: Your Library (Local MP3 Upload & Management) */}
           <MusicLibrary
             localTracks={localTracks}
             setLocalTracks={setLocalTracks}
             player={player}
+            language={language}
           />
 
           {/* Section 5: Minimal Footer */}

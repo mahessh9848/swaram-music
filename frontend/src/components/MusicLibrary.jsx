@@ -8,7 +8,7 @@ import { saveImportedTrack, deleteImportedTrack, renameImportedTrack } from '../
  * Persisted in IndexedDB.
  * Supports: delete, rename with modal, three-dot context menu, theme transitions.
  */
-export default function MusicLibrary({ localTracks, setLocalTracks, player }) {
+export default function MusicLibrary({ localTracks, setLocalTracks, player, language }) {
   const [isImporting, setIsImporting] = useState(false);
   const [songToDelete, setSongToDelete] = useState(null);
   const [songToRename, setSongToRename] = useState(null);
@@ -31,7 +31,7 @@ export default function MusicLibrary({ localTracks, setLocalTracks, player }) {
     try {
       const newSaved = [];
       for (const file of files) {
-        const track = await saveImportedTrack(file);
+        const track = await saveImportedTrack(file, { language: language || 'ENGLISH' });
         newSaved.push(track);
       }
       setLocalTracks((prev) => [...prev, ...newSaved]);
